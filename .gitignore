@@ -1,0 +1,7 @@
+# SWAP #
+########
+*.*.swp
+
+# Live Data Files #
+###################
+SantaList.json

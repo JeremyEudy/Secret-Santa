@@ -1,6 +1,7 @@
 # Author: Jeremy Eudy
 import sys, getopt, os
 import json, csv
+import random, datetime
 
 def printHeader():
     print("###################################################")
@@ -9,6 +10,28 @@ def printHeader():
     print("#                                                 #")
     print("###################################################")
     return
+
+def sendInfo(pairs):
+    print(pairs)
+    sys.exit()
+
+def buildPairs(participants):
+    pairs = {}
+    options = list(participants.keys())
+    now = datetime.datetime.now()
+    while(True):
+        if len(pairs) == len(options):
+            break
+
+        currentPerson = random.choice(options)
+        tempPartner = random.choice(options)
+        if currentPerson != tempPartner and currentPerson not in pairs.keys() and tempPartner not in pairs.values():
+            pairs[currentPerson] = tempPartner
+
+        if (datetime.datetime.now()-now).seconds > 3:
+            return 0
+
+    return pairs
 
 def silent(argv):
     if len(argv) == 0:
@@ -33,7 +56,7 @@ def silent(argv):
 
     if inputFile:
         participants = {}
-        with open("inputFile", "r") as f:
+        with open(inputFile, "r") as f:
             if fileType == "json":
                 participants = json.loads(f.read())
             elif fileType == "csv":
@@ -41,7 +64,12 @@ def silent(argv):
                 for row in csvReader:
                     participants[row[0]] = row[1]
 
-        print(participants)
+        while(True):
+            pairs = buildPairs(participants)
+            if type(pairs) is dict:
+                sendInfo(pairs)
+            elif pairs == 0:
+                pairs = buildPairs(participants)
 
 def manual():
     printHeader()
@@ -62,7 +90,12 @@ def manual():
         email = input("{}\n>".format(person))
         participants[person]= email
 
-    print(participants)
+    while(True):
+       pairs = buildPairs(participants)
+       if type(pairs) is dict:
+           sendInfo(pairs)
+       elif pairs == 0:
+           pairs = buildPairs(participants)
 
 if __name__ == "__main__":
     os.system("clear")
